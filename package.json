@@ -1,0 +1,17 @@
+{
+  "name": "chisu-cloud",
+  "version": "3.1.0",
+  "private": true,
+  "description": "尺素 Chatgram 云端服务：动态密码登录 · 十日即焚",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "local": "DATA_DIR=./data node server.js"
+  },
+  "dependencies": {
+    "pg": "^8.23.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

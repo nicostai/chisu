@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+<title>尺素 · 私语</title>
+<meta name="theme-color" content="#efe7d8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon-192.png">
+<style>
+:root{
+  --paper:#efe7d8;--paper2:#f7f1e4;--ink:#2b2a26;--ink2:#5d584e;--mute:#8a7b62;
+  --seal:#a83c2e;--seal2:#8d2f23;--gold:#b99a63;--line:rgba(171,138,85,.32);
+  --indigo:#46586b;--sh:0 2px 10px rgba(80,60,35,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{
+  font-family:"Songti SC","Source Han Serif SC","Noto Serif CJK SC","STSong",Georgia,serif;
+  color:var(--ink);overflow:hidden;
+  background:radial-gradient(122% 82% at 50% 0%,#f9f4e9 0%,#efe7d8 46%,#e4d8c2 100%);
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.7;
+  background-image:radial-gradient(rgba(120,95,60,.07) .8px,transparent .8px);background-size:3px 3px;
+}
+.hidden{display:none!important}
+input,button,textarea{font-family:inherit}
+
+/* ---------------- 登录 ---------------- */
+#login{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 26px}
+.seal-logo{
+  width:74px;height:74px;border-radius:18px;display:grid;place-items:center;
+  background:linear-gradient(158deg,#b8483a,#8b2d21);color:#faf3e4;font-size:40px;line-height:1;font-weight:600;
+  box-shadow:0 10px 24px rgba(140,47,35,.26),inset 0 0 0 1px rgba(250,243,228,.3);
+  letter-spacing:0;padding-bottom:2px;
+}
+h1.brand{font-size:29px;letter-spacing:.42em;text-indent:.42em;margin:22px 0 7px;font-weight:600;color:#332f27}
+.sub{font-size:11.5px;letter-spacing:.26em;text-indent:.26em;color:var(--mute)}
+.field{width:100%;max-width:340px;margin-top:13px}
+.field input{
+  width:100%;height:50px;border:1px solid var(--line);background:rgba(255,252,244,.8);
+  border-radius:12px;padding:0 16px;font-size:16px;color:var(--ink);outline:none;
+  transition:border-color .2s,box-shadow .2s;box-shadow:inset 0 1px 0 rgba(255,255,255,.75)
+}
+.field input:focus{border-color:rgba(168,60,46,.48);box-shadow:0 0 0 3px rgba(168,60,46,.07)}
+#code{letter-spacing:.44em;text-indent:.44em;text-align:center;font-size:21px;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:600}
+.cd{width:100%;max-width:340px;height:3px;margin-top:12px;border-radius:3px;background:rgba(171,138,85,.16);overflow:hidden}
+.cd>i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#c9a961,#a83c2e);transition:width .95s linear}
+.cdtext{width:100%;max-width:340px;font-size:11.5px;color:var(--mute);margin-top:8px;letter-spacing:.05em;text-align:center;line-height:1.6}
+.btn{
+  width:100%;max-width:340px;height:50px;margin-top:20px;border:0;border-radius:12px;
+  background:linear-gradient(170deg,#b04a3b,#8f3225);color:#fbf5e7;font-size:16px;
+  letter-spacing:.24em;text-indent:.24em;box-shadow:0 9px 18px rgba(140,47,35,.2);cursor:pointer;transition:.15s
+}
+.btn:active{transform:translateY(1px);box-shadow:0 4px 10px rgba(140,47,35,.18)}
+.btn[disabled]{opacity:.5;box-shadow:none}
+.link{background:none;border:0;color:var(--mute);font-size:12.5px;margin-top:20px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.tipbox{max-width:340px;width:100%;margin-top:16px;font-size:11.5px;color:#8d7f68;line-height:1.75;text-align:center;letter-spacing:.02em}
+
+/* ---------------- 主体 ---------------- */
+#app{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column}
+header{
+  flex:0 0 auto;height:54px;display:flex;align-items:center;gap:10px;padding:0 14px;
+  border-bottom:1px solid var(--line);background:rgba(247,241,228,.88);backdrop-filter:blur(12px)
+}
+.hd-t{display:flex;flex-direction:column;justify-content:center;flex:1;min-width:0}
+.brand-sm{font-size:16.5px;letter-spacing:.26em;font-weight:600;color:#332f27}
+.online{font-size:11px;color:var(--mute);letter-spacing:.08em;margin-top:2px;display:flex;align-items:center;gap:5px}
+.dot{width:5px;height:5px;border-radius:50%;background:#7d9471;box-shadow:0 0 0 2px rgba(125,148,113,.16)}
+.icon-btn{width:34px;height:34px;border-radius:9px;border:1px solid transparent;background:none;display:grid;place-items:center;color:#7a6d59;cursor:pointer}
+.icon-btn:active{background:rgba(171,138,85,.12)}
+
+#pageWrap{flex:1;display:flex;flex-direction:column;min-height:0;position:relative}
+.page{flex:1;display:flex;flex-direction:column;min-height:0}
+.page[data-hidden="1"]{display:none}
+
+#expireBar{
+  margin:9px 12px 0;padding:9px 12px;border-radius:10px;display:flex;align-items:center;gap:8px;
+  background:rgba(168,60,46,.07);border:1px solid rgba(168,60,46,.26);color:#8a2e22;
+  font-size:12.5px;line-height:1.5;cursor:pointer
+}
+#expireBar b{font-weight:600}
+#expireBar .go{margin-left:auto;font-size:12px;text-decoration:underline;text-underline-offset:3px;white-space:nowrap;flex:0 0 auto}
+
+#msgs{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 12px 10px;display:flex;flex-direction:column}
+#msgs::-webkit-scrollbar{width:4px}
+#msgs::-webkit-scrollbar-thumb{background:rgba(171,138,85,.28);border-radius:8px}
+.loadmore{text-align:center;font-size:11.5px;color:#a3947b;padding:6px 0 10px;letter-spacing:.08em}
+.tsep{text-align:center;font-size:11px;color:#a2947c;margin:15px 0 8px;letter-spacing:.12em}
+
+.msg{display:flex;gap:9px;margin:7px 0;align-items:flex-start}
+.msg.me{flex-direction:row-reverse}
+.msg.cont{margin-top:-3px}
+.msg.cont .ava{visibility:hidden}
+.ava{width:34px;height:34px;border-radius:50%;flex:0 0 auto;overflow:hidden;background:#e8dfcd;
+  box-shadow:0 0 0 1px rgba(171,138,85,.45),0 2px 6px rgba(60,45,25,.1)}
+.ava img{width:100%;height:100%;display:block;object-fit:cover}
+.stack{display:flex;flex-direction:column;min-width:0;max-width:calc(100% - 46px)}
+.msg.me .stack{align-items:flex-end}
+.who{font-size:11px;color:var(--mute);margin:0 0 4px 3px;letter-spacing:.05em}
+.bubble{
+  max-width:100%;padding:9px 13px;border-radius:14px;font-size:15px;line-height:1.62;
+  word-break:break-word;white-space:pre-wrap;position:relative
+}
+.msg.other .bubble{background:rgba(255,252,244,.95);border:1px solid rgba(171,138,85,.28);
+  border-top-left-radius:5px;box-shadow:var(--sh);color:#332f27}
+.msg.me .bubble{background:linear-gradient(158deg,#4f6278,#3b4b5e);color:#f2ece0;
+  border-top-right-radius:5px;box-shadow:0 3px 10px rgba(52,64,80,.2)}
+.bubble code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:4px;font-size:13.5px;
+  font-family:ui-monospace,Menlo,Consolas,monospace}
+.msg.me .bubble code{background:rgba(255,255,255,.14)}
+.bubble a{color:inherit;text-decoration:underline;text-underline-offset:2px;opacity:.92}
+.imgbox{border-radius:12px;overflow:hidden;line-height:0;box-shadow:var(--sh);background:#e8dfcd;border:1px solid rgba(171,138,85,.24)}
+.imgbox img{display:block;max-width:212px;max-height:300px;object-fit:cover}
+.file{
+  display:flex;align-items:center;gap:10px;min-width:186px;text-decoration:none;color:inherit;
+  padding:2px 0
+}
+.file .fi{width:36px;height:44px;border-radius:6px;display:grid;place-items:center;flex:0 0 auto;
+  font-size:9.5px;font-weight:700;letter-spacing:.03em;color:#fff;background:#8c7a5e;
+  box-shadow:inset 0 -6px 10px rgba(0,0,0,.12)}
+.fi.pdf{background:#a8514a}.fi.doc,.fi.docx{background:#44688c}.fi.xls,.fi.xlsx{background:#4e7a55}
+.fi.ppt,.fi.pptx{background:#a56b42}.fi.zip,.fi.rar,.fi.gz,.fi.\37 z{background:#7b6a52}
+.fi.mp3,.fi.m4a,.fi.wav{background:#7a5d86}.fi.mp4,.fi.mov{background:#5c6b86}
+.fi.apk{background:#5f7d68}.fi.md,.fi.txt{background:#8a8377}
+.file .nm{min-width:0;display:block}
+.file .fn{display:block;font-size:14px;font-weight:600;line-height:1.35;word-break:break-all}
+.file .fs{display:block;font-size:11px;opacity:.66;margin-top:3px}
+.file{max-width:100%}
+
+#composer{
+  flex:0 0 auto;display:flex;align-items:flex-end;gap:7px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--line);background:rgba(247,241,228,.94);backdrop-filter:blur(12px)
+}
+#input{
+  flex:1;min-height:40px;max-height:118px;border:1px solid var(--line);border-radius:20px;
+  background:rgba(255,252,244,.92);padding:10px 14px;font-size:15px;color:var(--ink);
+  outline:none;resize:none;line-height:1.45;overflow-y:auto
+}
+#input:focus{border-color:rgba(168,60,46,.4)}
+.cbtn{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:rgba(255,252,244,.92);
+  display:grid;place-items:center;flex:0 0 auto;color:#6e6353;cursor:pointer;transition:.14s
+}
+.cbtn:active{transform:scale(.94)}
+.cbtn.send{background:linear-gradient(168deg,#b04a3b,#8f3225);border-color:transparent;color:#fbf5e7;
+  box-shadow:0 4px 10px rgba(140,47,35,.22)}
+
+nav.tabs{flex:0 0 auto;display:flex;border-top:1px solid var(--line);background:rgba(247,241,228,.97);
+  padding-bottom:env(safe-area-inset-bottom)}
+.tab{flex:1;padding:8px 0 7px;text-align:center;font-size:10.5px;color:#9d8e75;letter-spacing:.14em;cursor:pointer}
+.tab.on{color:var(--seal)}
+.tab svg{display:block;margin:0 auto 3px;opacity:.85}
+
+/* ---------------- 我的 ---------------- */
+#page-me{overflow-y:auto;padding-bottom:16px}
+.card{background:rgba(255,252,244,.9);border:1px solid var(--line);border-radius:14px;margin:12px;
+  box-shadow:var(--sh);overflow:hidden}
+.hero{display:flex;align-items:center;gap:14px;padding:16px}
+.hero .ava{width:60px;height:60px}
+.hero-name{font-size:18px;font-weight:600;letter-spacing:.04em}
+.hero-user{font-size:12px;color:var(--mute);margin-top:5px;letter-spacing:.06em}
+.hero-edit{margin-left:auto;font-size:12px;color:var(--mute);border:1px solid var(--line);
+  background:none;border-radius:16px;padding:5px 12px;cursor:pointer}
+.row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;
+  border-bottom:1px solid rgba(171,138,85,.18);font-size:14.5px;cursor:pointer;color:#3c3830}
+.row:last-child{border-bottom:0}
+.row:active{background:rgba(171,138,85,.07)}
+.row .chev{color:#b6a68c;font-size:16px}
+#srvVal{max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .val{color:var(--mute);font-size:12.5px;margin-left:auto;margin-right:8px}
+.sec-title{font-size:11.5px;color:#a3947b;letter-spacing:.18em;padding:16px 20px 6px}
+
+/* ---------------- 弹层 ---------------- */
+#sheet{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;justify-content:flex-end}
+#sheet .mask{position:absolute;inset:0;background:rgba(40,32,22,.42);backdrop-filter:blur(2px)}
+#sheet .panel{
+  position:relative;background:var(--paper2);border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));
+  box-shadow:0 -8px 30px rgba(50,38,22,.22);animation:up .24s ease-out;max-height:82vh;overflow-y:auto
+}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-title{font-size:15px;font-weight:600;letter-spacing:.1em;margin-bottom:14px;color:#332f27}
+.sheet-cancel{width:100%;height:44px;margin-top:14px;border:1px solid var(--line);background:none;
+  border-radius:11px;color:var(--mute);font-size:14px;cursor:pointer}
+.avatars{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.avatars .pa{aspect-ratio:1;border-radius:50%;overflow:hidden;cursor:pointer;padding:0;border:2px solid transparent;
+  background:#e8dfcd;position:relative}
+.avatars .pa img{width:100%;height:100%;display:block;object-fit:cover}
+.avatars .pa.on{border-color:var(--seal);box-shadow:0 0 0 3px rgba(168,60,46,.14)}
+#sheetInput{width:100%;height:46px;border:1px solid var(--line);border-radius:11px;background:#fffdf7;
+  padding:0 14px;font-size:15px;outline:none;color:var(--ink)}
+.sheet-act{width:100%;height:46px;margin-top:12px;border:0;border-radius:11px;color:#fbf5e7;
+  background:linear-gradient(170deg,#b04a3b,#8f3225);font-size:15px;cursor:pointer}
+.sheet-note{font-size:12.5px;color:#7d7059;line-height:1.8;margin-top:12px}
+.secret-box{
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;letter-spacing:.06em;
+  background:#fffdf7;border:1px dashed rgba(171,138,85,.5);border-radius:10px;padding:12px;
+  word-break:break-all;color:#4a4237;line-height:1.7;margin-top:10px
+}
+
+#toast{
+  position:fixed;left:50%;bottom:88px;transform:translateX(-50%) translateY(8px);
+  background:rgba(43,37,28,.92);color:#f6efe1;font-size:13px;padding:10px 16px;border-radius:20px;
+  z-index:60;opacity:0;pointer-events:none;transition:.22s;max-width:84vw;text-align:center;line-height:1.5
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+#lightbox{position:fixed;inset:0;z-index:50;background:rgba(20,16,12,.94);display:grid;place-items:center;padding:16px}
+#lightbox img{max-width:100%;max-height:100%;border-radius:6px}
+
+.upmask{position:fixed;inset:0;z-index:55;background:rgba(30,24,16,.4);display:grid;place-items:center}
+.upcard{background:var(--paper2);border-radius:14px;padding:20px 24px;min-width:200px;text-align:center;box-shadow:0 12px 30px rgba(0,0,0,.2)}
+.upbar{height:4px;border-radius:3px;background:rgba(171,138,85,.2);margin-top:12px;overflow:hidden}
+.upbar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c9a961,#a83c2e);transition:width .2s}
+.uptext{font-size:12.5px;color:#6d6047;margin-top:10px;letter-spacing:.05em}
+</style>
+</head>
+<body>
+
+<!-- ==================== 登录 ==================== -->
+<div id="login">
+  <div class="seal-logo">尺</div>
+  <h1 class="brand">尺素</h1>
+  <div class="sub">私 语 · 十 日 即 焚</div>
+
+  <div class="field"><input id="username" placeholder="账号" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
+  <div class="field"><input id="code" placeholder="六位动态码" inputmode="numeric" maxlength="6" autocomplete="one-time-code"></div>
+  <div class="cd"><i id="cdBar"></i></div>
+  <div class="cdtext" id="cdText">动态码每 3 分钟刷新，只在这台手机的 App 里生成</div>
+
+  <button class="btn" id="loginBtn">进 入</button>
+  <button class="link" id="regLink">第一次来？在这台手机创建账号</button>
+  <div class="tipbox" id="loginTip"></div>
+</div>
+
+<!-- ==================== 主界面 ==================== -->
+<div id="app" class="hidden">
+  <header>
+    <div class="ava" id="hdAva" style="width:32px;height:32px"></div>
+    <div class="hd-t">
+      <div class="brand-sm">尺 素</div>
+      <div class="online"><span class="dot"></span><span id="onlineText">正在连接…</span></div>
+    </div>
+    <button class="icon-btn" id="btnRefresh" title="刷新">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg>
+    </button>
+  </header>
+
+  <div id="pageWrap">
+    <!-- 聊天 -->
+    <section class="page" id="page-chat">
+      <div id="expireBar" class="hidden">
+        <span id="expireText"></span>
+        <span class="go" id="expireGo">导出保存</span>
+      </div>
+      <div id="msgs"></div>
+      <div id="composer">
+        <button class="cbtn" id="btnMore" aria-label="更多">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <textarea id="input" rows="1" placeholder="写点什么…"></textarea>
+        <button class="cbtn" id="btnEmoji" aria-label="表情">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+            <circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c1 1.3 2.2 2 3.5 2s2.5-.7 3.5-2"/><path d="M9 9.6v.6M15 9.6v.6"/></svg>
+        </button>
+        <button class="cbtn send" id="btnSend" aria-label="发送">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.5 12h14M12.5 5.5 19 12l-6.5 6.5"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 我的 -->
+    <section class="page" id="page-me" data-hidden="1">
+      <div class="card hero">
+        <div class="ava" id="meAva"></div>
+        <div>
+          <div class="hero-name" id="meNick">—</div>
+          <div class="hero-user" id="meUser">—</div>
+        </div>
+        <button class="hero-edit" id="btnEditName">改名</button>
+      </div>
+
+      <div class="sec-title">安 全 与 数 据</div>
+      <div class="card">
+        <div class="row" id="rowExport"><span>导出为 Markdown</span><span class="chev">›</span></div>
+        <div class="row" id="rowKey"><span>动态密钥备份</span><span class="val" id="keyVal"></span><span class="chev">›</span></div>
+        <div class="row" id="rowRetention"><span>十日即焚</span><span class="val" id="retVal">—</span><span class="chev">›</span></div>
+      </div>
+
+      <div class="sec-title">账 号</div>
+      <div class="card">
+        <div class="row" id="rowServer" style="display:none"><span>服务器地址</span><span class="val" id="srvVal">—</span><span class="chev">›</span></div>
+        <div class="row" id="rowLogout"><span>退出登录</span><span class="chev">›</span></div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:#a89a82;letter-spacing:.16em;padding:10px 0 4px">尺 素 · v3.1</div>
+    </section>
+  </div>
+
+  <nav class="tabs">
+    <div class="tab on" data-tab="chat">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+        <path d="M20 14.5a2.5 2.5 0 0 1-2.5 2.5H8l-4 3V6a2.5 2.5 0 0 1 2.5-2.5h11A2.5 2.5 0 0 1 20 6z"/></svg>
+      聊天
+    </div>
+    <div class="tab" data-tab="me">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c.8-3.6 3.5-5.4 7-5.4s6.2 1.8 7 5.4"/></svg>
+      我的
+    </div>
+  </nav>
+</div>
+
+<!-- 通用弹层 -->
+<div id="sheet" class="hidden">
+  <div class="mask" id="sheetMask"></div>
+  <div class="panel" id="sheetPanel">
+    <div class="sheet-title" id="sheetTitle"></div>
+    <div id="sheetBody"></div>
+    <button class="sheet-cancel" id="sheetCancel">取消</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="lightbox" class="hidden"><img id="lightboxImg" alt=""></div>
+
+<input type="file" id="imgInput" accept="image/*" class="hidden">
+<input type="file" id="fileInput" class="hidden">
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+var BRIDGE=(typeof window.ChatgramApp!=='undefined')?window.ChatgramApp:null;
+
+/* ==================== 内置头像 ==================== */
+function svgA(inner,c1,c2){
+  var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">'
+   +'<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">'
+   +'<stop offset="0" stop-color="'+c1+'"/><stop offset="1" stop-color="'+c2+'"/></linearGradient></defs>'
+   +'<rect width="120" height="120" fill="url(#g)"/>'+inner+'</svg>';
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
+}
+var PRESETS={
+  p1:svgA('<circle cx="80" cy="32" r="11" fill="#f0d7a8" opacity=".85"/><path d="M0 96 L26 66 L44 84 L62 58 L86 92 L104 70 L120 88 V120 H0Z" fill="#3b4a44" opacity=".72"/><path d="M0 108 L30 88 L52 100 L78 82 L100 98 L120 90 V120 H0Z" fill="#26302c" opacity=".84"/>','#d9c39a','#8a7350'),
+  p2:svgA('<circle cx="38" cy="32" r="15" fill="#f2e4c4" opacity=".9"/><path d="M92 120 V54" stroke="#2b2a26" stroke-width="5" stroke-linecap="round"/><path d="M92 60 L70 48 M92 72 L114 58 M92 52 L80 38" stroke="#2b2a26" stroke-width="4" stroke-linecap="round"/><circle cx="70" cy="48" r="9" fill="#33403a" opacity=".8"/><circle cx="108" cy="56" r="8" fill="#33403a" opacity=".8"/><circle cx="80" cy="38" r="7" fill="#33403a" opacity=".8"/>','#3a4a55','#1c262e'),
+  p3:svgA('<path d="M46 120 V26" stroke="#4d6b52" stroke-width="5" stroke-linecap="round"/><path d="M46 44 q22 -6 30 -16" stroke="#4d6b52" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M46 70 q-24 -4 -32 -16" stroke="#4d6b52" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M46 92 q22 -4 28 -12" stroke="#4d6b52" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="46" cy="38" r="4" fill="#8ba889"/><circle cx="46" cy="64" r="4" fill="#8ba889"/>','#e3e8da','#b9c4ad'),
+  p4:svgA('<path d="M60 80 L16 52 A52 52 0 0 1 104 52 Z" fill="#e6d3ae" opacity=".94"/><path d="M60 80 L34 60 M60 80 L50 50 M60 80 L70 50 M60 80 L86 60" stroke="#a3763f" stroke-width="1.6" opacity=".65"/><circle cx="60" cy="80" r="4" fill="#a3763f"/>','#efe0c2','#c9a97a'),
+  p5:svgA('<circle cx="60" cy="46" r="18" fill="#2e2018"/><path d="M24 120 q5 -34 36 -34 t36 34Z" fill="#2e2018"/><path d="M0 0 H120 V14 H0Z" fill="#5c4028" opacity=".5"/>','#cba87a','#7d5a3c'),
+  p6:svgA('<path d="M0 84 q22 -16 44 0 t44 0 t32 -6 V120 H0Z" fill="#2f4a58" opacity=".8"/><path d="M0 98 q26 -14 52 0 t52 0 V120 H0Z" fill="#1e3340" opacity=".86"/><circle cx="86" cy="32" r="10" fill="#e8dcc0" opacity=".68"/>','#5e7f92','#27414f'),
+  p7:svgA('<rect x="30" y="30" width="60" height="60" rx="9" fill="none" stroke="#c25a45" stroke-width="4"/><text x="60" y="74" font-size="32" text-anchor="middle" fill="#c25a45" font-family="serif">素</text>','#f3e6d0','#dcc8a6'),
+  p8:svgA('<path d="M52 120 q-6 -34 6 -58" stroke="#4c6b5b" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M58 72 q16 -22 34 -26" stroke="#4c6b5b" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M58 72 q-20 -10 -30 -2" stroke="#4c6b5b" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="92" cy="44" r="7" fill="#c9a0a8"/><circle cx="70" cy="60" r="5.5" fill="#c9a0a8"/>','#e7e8dc','#c9cdb9')
+};
+function avaSrc(v){
+  if(!v) return PRESETS.p1;
+  if(PRESETS[v]) return PRESETS[v];
+  if(v.charAt(0)==='/') return v;
+  return PRESETS.p1;
+}
+
+/* ==================== 状态 ==================== */
+var S={
+  token:localStorage.getItem('cs_token')||'',
+  me:null, msgs:[], members:[], tab:'chat',
+  es:null, oldest:0, hasMore:false, loading:false,
+  retention:10, totpStep:180, cdTimer:null, retTimer:null,
+  lastExpireWarn:0
+};
+
+function toast(msg,ms){
+  var t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._tm); t._tm=setTimeout(function(){t.classList.remove('show')},ms||2400);
+}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmtSize(n){
+  n=+n||0;
+  if(n<1024) return n+' B';
+  if(n<1048576) return (n/1024).toFixed(1)+' KB';
+  if(n<1073741824) return (n/1048576).toFixed(1)+' MB';
+  return (n/1073741824).toFixed(2)+' GB';
+}
+function hhmm(ts){
+  var d=new Date(ts);
+  return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+function dayLabel(ts){
+  var d=new Date(ts), n=new Date();
+  var same=function(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate()};
+  if(same(d,n)) return '今天';
+  var y=new Date(n.getTime()-86400000);
+  if(same(d,y)) return '昨天';
+  return (d.getMonth()+1)+'月'+d.getDate()+'日';
+}
+function leftText(ms){
+  if(ms<0) ms=0;
+  var d=ms/86400000;
+  if(d>=1.5) return Math.round(d)+' 天';
+  var h=ms/3600000;
+  if(h>=1) return Math.ceil(h)+' 小时';
+  var m=Math.max(1,Math.floor(ms/60000));
+  return m+' 分钟';
+}
+
+/* ==================== 极简 Markdown ==================== */
+function md(s){
+  var h=esc(s);
+  h=h.replace(/```([\s\S]*?)```/g,function(_,c){return '<code>'+c.replace(/\n$/,'')+'</code>'});
+  h=h.replace(/`([^`\n]+)`/g,'<code>$1</code>');
+  h=h.replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>');
+  h=h.replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<i>$2</i>');
+  h=h.replace(/~~([^~\n]+)~~/g,'<s>$1</s>');
+  h=h.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  h=h.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g,'$1<a href="$2" target="_blank" rel="noopener noreferrer">$2</a>');
+  return h;
+}
+
+/* ==================== 请求 ==================== */
+function api(path,opt){
+  opt=opt||{};
+  opt.headers=Object.assign({'Content-Type':'application/json'},opt.headers||{});
+  if(S.token) opt.headers['Authorization']='Bearer '+S.token;
+  return fetch(path,opt).then(function(r){
+    return r.text().then(function(t){
+      var d=null; try{d=JSON.parse(t)}catch(e){}
+      if(!r.ok) throw new Error((d&&d.error)||('请求失败 '+r.status));
+      return d;
+    });
+  });
+}
+
+/* ==================== 登录 ==================== */
+var cdEndAt=0;
+function codeLeft(){
+  if(BRIDGE&&S.loginUser){
+    try{ var s=BRIDGE.remainingSeconds(S.loginUser); if(s>=0) return s; }catch(e){}
+  }
+  return S.totpStep-(Math.floor(Date.now()/1000)%S.totpStep);
+}
+function paintCd(){
+  var left=codeLeft(), pct=Math.max(0,Math.min(100,left/S.totpStep*100));
+  $('#cdBar').style.width=pct+'%';
+  var m=Math.floor(left/60), s=left%60;
+  if(BRIDGE&&S.loginUser){
+    if(BRIDGE.hasSecret(S.loginUser)){
+      $('#cdText').innerHTML='本机动态码 <b style="color:#a83c2e;font-weight:600">'+m+':'+String(s).padStart(2,'0')+'</b> 后刷新';
+    }else{
+      $('#cdText').textContent='这台手机没有该账号的密钥，请从你的 App 里读取 6 位码';
+    }
+  }else if(S.loginUser){
+    $('#cdText').textContent='请输入手机 App 上的 6 位动态码';
+  }else if(BRIDGE){
+    $('#cdText').textContent='动态密码 3 分钟一换';
+  }else{
+    $('#cdText').textContent='动态密码 3 分钟一换，在手机 App 里生成';
+  }
+}
+function startCd(){
+  clearInterval(S.cdTimer);
+  paintCd();
+  S.cdTimer=setInterval(function(){
+    paintCd();
+    if(codeLeft()<=1) autoFillCode();
+  },1000);
+}
+function autoFillCode(){
+  if(!BRIDGE||!S.loginUser) return;
+  try{
+    if(!BRIDGE.hasSecret(S.loginUser)) return;
+    var c=BRIDGE.currentCode(S.loginUser);
+    if(c&&c.length===6) $('#code').value=c;
+  }catch(e){}
+}
+function showLogin(){
+  $('#app').classList.add('hidden');
+  $('#login').classList.remove('hidden');
+  $('#regLink').classList.toggle('hidden', !BRIDGE);
+  $('#loginTip').innerHTML = BRIDGE
+    ? '密钥只存在这台手机上，不上传、不联网。'
+    : '你正在用浏览器访问。账号要在手机的「尺素」App 里创建，再用 App 上的 6 位动态码登录。';
+  startCd();
+}
+$('#username').addEventListener('input',function(){
+  S.loginUser=this.value.trim();
+  autoFillCode(); paintCd();
+});
+$('#regLink').addEventListener('click',function(){
+  if(!BRIDGE){ toast('创建账号需要在手机的「尺素」App 里完成'); return; }
+  openSheet('在这台手机创建账号', regHtml(), function(){
+    $('#regGo').onclick=function(){
+      var name=$('#regName').value.trim();
+      if(!/^[\u4e00-\u9fa5A-Za-z0-9_]{2,16}$/.test(name)) return toast('账号名 2-16 位，中文/字母/数字/下划线');
+      var btn=$('#regGo'); btn.disabled=true; btn.textContent='正在创建…';
+      var r;
+      try{ r=JSON.parse(BRIDGE.createSecret(name)); }
+      catch(e){ btn.disabled=false; btn.textContent='创建并登录'; return toast('生成密钥失败'); }
+      api('/api/register',{method:'POST',body:JSON.stringify({username:name,secret:r.secret,code:r.code})})
+        .then(function(d){
+          try{ BRIDGE.confirmSecret(name); }catch(e){}
+          S.token=d.token; localStorage.setItem('cs_token',d.token);
+          closeSheet(); enter(d);
+        })
+        .catch(function(e){
+          try{ BRIDGE.dropSecret(name); }catch(_){}
+          btn.disabled=false; btn.textContent='创建并登录';
+          toast(e.message);
+        });
+    };
+  });
+});
+function regHtml(){
+  return '<div class="sheet-note" style="margin-top:0;margin-bottom:12px">账号名就是别人找你的名字。密钥只生成在这一台手机上。</div>'
+    +'<input id="regName" placeholder="给账号起个名字" autocapitalize="off" autocorrect="off" spellcheck="false">'
+    +'<button class="sheet-act" id="regGo">创建并登录</button>';
+}
+$('#loginBtn').addEventListener('click',function(){
+  var u=$('#username').value.trim(), c=$('#code').value.replace(/\D/g,'');
+  if(!u) return toast('请填账号');
+  if(c.length!==6) return toast('请输入 6 位动态码');
+  var b=$('#loginBtn'); b.disabled=true; b.textContent='正在验证…';
+  api('/api/login',{method:'POST',body:JSON.stringify({username:u,code:c})})
+    .then(function(d){
+      S.token=d.token; localStorage.setItem('cs_token',d.token);
+      enter(d);
+    })
+    .catch(function(e){ toast(e.message); })
+    .then(function(){ b.disabled=false; b.textContent='进 入'; });
+});
+$('#code').addEventListener('input',function(){
+  this.value=this.value.replace(/\D/g,'').slice(0,6);
+  if(this.value.length===6&&$('#username').value.trim()) $('#loginBtn').click();
+});
+
+/* ==================== 进入应用 ==================== */
+function enter(d){
+  S.me=d.me; S.members=d.members||[];
+  S.retention=d.retentionDays||10; S.totpStep=d.totpStep||180;
+  S.msgs=[]; S.oldest=0;
+  clearInterval(S.cdTimer);
+  $('#login').classList.add('hidden');
+  $('#app').classList.remove('hidden');
+  paintMe(); paintOnline();
+  loadMsgs(true);
+  connectSSE();
+  checkRetention();
+  clearInterval(S.retTimer);
+  S.retTimer=setInterval(checkRetention,60000);
+}
+function paintMe(){
+  if(!S.me) return;
+  $('#meNick').textContent=S.me.nick||S.me.username;
+  $('#meUser').textContent='@'+S.me.username;
+  $('#meAva').innerHTML='<img src="'+avaSrc(S.me.avatar)+'" alt="">';
+  $('#hdAva').innerHTML='<img src="'+avaSrc(S.me.avatar)+'" alt="">';
+  try{
+    if(BRIDGE){
+      $('#keyVal').textContent=BRIDGE.hasSecret(S.me.username)?'本机已存':'未在本机';
+    }else{
+      $('#keyVal').textContent='—';
+    }
+  }catch(e){}
+  $('#retVal').textContent=S.msgs.length?leftText(Math.min.apply(null,S.msgs.map(function(m){return m.leftMs})))+'后首条销毁':'—';
+}
+function paintOnline(){
+  var on=S.members.filter(function(m){return m.online});
+  if(!on.length){ $('#onlineText').textContent='只有你在'; return; }
+  var names=on.slice(0,3).map(function(m){return m.nick||m.username}).join('、');
+  $('#onlineText').textContent=(on.length>3?names+' 等 '+on.length+' 人在线':names+' 在线');
+}
+
+/* ==================== 消息 ==================== */
+function loadMsgs(first){
+  if(S.loading) return;
+  S.loading=true;
+  var q='/api/messages?limit=40'+(first?'':'&before='+S.oldest);
+  api(q).then(function(d){
+    S.hasMore=d.hasMore;
+    if(first){
+      S.msgs=d.messages||[];
+      renderMsgs(true);
+    }else{
+      S.msgs=(d.messages||[]).concat(S.msgs);
+      renderMsgs(false);
+    }
+    if(S.msgs.length) S.oldest=S.msgs[0].seq;
+    paintMe();
+  }).catch(function(e){
+    if(/401/.test(e.message)) doLogout();
+  }).then(function(){ S.loading=false; });
+}
+function bubbleHtml(m){
+  if(m.type==='image'&&m.file){
+    return '<div class="imgbox"><img src="'+esc(m.file.url)+'" loading="lazy" data-full="'+esc(m.file.url)+'" alt=""></div>';
+  }
+  if(m.type==='file'&&m.file){
+    var nm=m.file.name||'文件';
+    var ext=(nm.split('.').pop()||'').toLowerCase();
+    var dl=m.file.url+'?dl=1&name='+encodeURIComponent(nm)+'&token='+encodeURIComponent(S.token);
+    return '<a class="file" href="'+esc(dl)+'" data-dl="'+esc(dl)+'" data-name="'+esc(nm)+'">'
+      +'<span class="fi '+esc(ext)+'">'+esc(ext.toUpperCase().slice(0,4))+'</span>'
+      +'<span class="nm"><span class="fn">'+esc(nm)+'</span><span class="fs">'+fmtSize(m.file.size)+'</span></span></a>';
+  }
+  return md(m.content);
+}
+function renderMsgs(toBottom){
+  var box=$('#msgs');
+  var prevTop=box.scrollTop, prevH=box.scrollHeight;
+  var html='';
+  if(S.hasMore) html+='<div class="loadmore" id="loadmore">上滑加载更早的消息</div>';
+  var lastTs=0;
+  for(var i=0;i<S.msgs.length;i++){
+    var m=S.msgs[i];
+    if(!lastTs||m.ts-lastTs>5*60*1000){
+      html+='<div class="tsep">'+dayLabel(m.ts)+' '+hhmm(m.ts)+'</div>';
+    }
+    lastTs=m.ts;
+    var mine=m.userId===(S.me&&S.me.id);
+    var cont=(i>0&&S.msgs[i-1].userId===m.userId&&m.ts-S.msgs[i-1].ts<4*60*1000);
+    html+='<div class="msg '+(mine?'me':'other')+(cont?' cont':'')+'">'
+      +'<div class="ava"><img src="'+avaSrc(m.avatar)+'" alt=""></div>'
+      +'<div class="stack">'
+      +(!mine?'<div class="who">'+esc(m.nick||m.username)+'</div>':'')
+      +'<div class="bubble">'+bubbleHtml(m)+'</div>'
+      +'</div></div>';
+  }
+  if(!S.msgs.length){
+    html='<div style="text-align:center;color:#a8997f;font-size:13px;padding:64px 24px;line-height:2">'
+      +'这里还没有话。<br>说点什么吧，十天后它会自己消失。</div>';
+  }
+  box.innerHTML=html;
+  if(toBottom){ box.scrollTop=box.scrollHeight; }
+  else{ box.scrollTop=box.scrollHeight-prevH+prevTop; }
+  paintMe();
+}
+function pushMsg(m){
+  if(S.msgs.some(function(x){return x.id===m.id})) return;
+  var nearBottom=isNearBottom();
+  S.msgs.push(m);
+  if(S.msgs.length>240) S.msgs=S.msgs.slice(-200);
+  renderMsgs(nearBottom);
+}
+function isNearBottom(){
+  var b=$('#msgs');
+  return b.scrollHeight-b.scrollTop-b.clientHeight<90;
+}
+$('#msgs').addEventListener('scroll',function(){
+  if(this.scrollTop<40&&S.hasMore&&!S.loading) loadMsgs(false);
+});
+$('#msgs').addEventListener('click',function(e){
+  var img=e.target.closest('img[data-full]');
+  if(img){ $('#lightboxImg').src=img.getAttribute('data-full'); $('#lightbox').classList.remove('hidden'); return; }
+  var a=e.target.closest('a[data-dl]');
+  if(a){
+    e.preventDefault();
+    var url=a.getAttribute('data-dl'), name=a.getAttribute('data-name');
+    if(BRIDGE&&BRIDGE.download){
+      toast('正在保存到下载目录…');
+      try{ BRIDGE.download(url,name); }catch(err){ toast('保存失败'); }
+    }else{
+      window.open(url,'_blank');
+    }
+  }
+});
+$('#lightbox').addEventListener('click',function(){ this.classList.add('hidden'); });
+
+/* ==================== 发送 ==================== */
+function sendText(){
+  var t=$('#input').value.trim();
+  if(!t) return;
+  $('#input').value=''; resizeInput();
+  api('/api/messages',{method:'POST',body:JSON.stringify({type:'text',content:t})})
+    .then(function(d){ pushMsg(d.message); })
+    .catch(function(e){ toast(e.message); $('#input').value=t; });
+}
+function sendMedia(file,kind,label){
+  if(!file) return;
+  if(file.size>30*1024*1024){ toast('文件最大 30MB'); return; }
+  showUp(label,0);
+  var task=(kind==='image'?shrink(file):Promise.resolve(file));
+  task.then(function(f){
+    return uploadXhr(f,kind,function(p){ showUp(label,p); });
+  }).then(function(up){
+    hideUp();
+    return api('/api/messages',{method:'POST',body:JSON.stringify({type:kind,content:JSON.stringify(up)})});
+  }).then(function(d){ pushMsg(d.message); })
+  .catch(function(e){ hideUp(); toast(e.message||'发送失败'); });
+}
+function shrink(file){
+  if(!/^image\//.test(file.type)) return Promise.resolve(file);
+  return new Promise(function(res){
+    var done=function(f){ res(f||file) };
+    var img=new Image();
+    var url=URL.createObjectURL(file);
+    img.onload=function(){
+      URL.revokeObjectURL(url);
+      var w=img.naturalWidth,h=img.naturalHeight,mx=1600;
+      var s=Math.min(1,mx/Math.max(w,h));
+      if(s>=0.999&&file.size<900*1024) return done(file);
+      try{
+        var c=document.createElement('canvas');
+        c.width=Math.round(w*s); c.height=Math.round(h*s);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        c.toBlob(function(b){
+          if(!b) return done(file);
+          done(new File([b],(file.name||'image').replace(/\.\w+$/,'')+'.jpg',{type:'image/jpeg'}));
+        },'image/jpeg',0.82);
+      }catch(e){ done(file); }
+    };
+    img.onerror=function(){ URL.revokeObjectURL(url); done(file); };
+    img.src=url;
+  });
+}
+function uploadXhr(file,kind,onP){
+  return new Promise(function(res,rej){
+    var x=new XMLHttpRequest();
+    x.open('POST','/api/upload?kind='+kind);
+    x.setRequestHeader('Authorization','Bearer '+S.token);
+    x.setRequestHeader('X-File-Name',encodeURIComponent(file.name||'file'));
+    x.upload.onprogress=function(e){ if(e.lengthComputable) onP(e.loaded/e.total); };
+    x.onload=function(){
+      var d=null; try{d=JSON.parse(x.responseText)}catch(e){}
+      if(x.status>=300) return rej(new Error((d&&d.error)||'上传失败'));
+      res(d);
+    };
+    x.onerror=function(){ rej(new Error('网络中断')); };
+    x.send(file);
+  });
+}
+function showUp(label,p){
+  var el=$('#upmask');
+  if(!el){
+    el=document.createElement('div');
+    el.id='upmask'; el.className='upmask';
+    el.innerHTML='<div class="upcard"><div class="uptext" id="upText"></div><div class="upbar"><i id="upBar"></i></div></div>';
+    document.body.appendChild(el);
+  }
+  $('#upText').textContent=label+' '+Math.round(p*100)+'%';
+  $('#upBar').style.width=(p*100)+'%';
+}
+function hideUp(){
+  var el=$('#upmask');
+  if(el) el.parentNode.removeChild(el);
+}
+function resizeInput(){
+  var el=$('#input');
+  el.style.height='auto';
+  el.style.height=Math.min(118,el.scrollHeight)+'px';
+}
+$('#input').addEventListener('input',resizeInput);
+$('#input').addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){ e.preventDefault(); sendText(); }
+});
+$('#btnSend').addEventListener('click',sendText);
+$('#imgInput').addEventListener('change',function(){
+  var f=this.files&&this.files[0]; this.value=''; if(f) sendMedia(f,'image','图片');
+});
+$('#fileInput').addEventListener('change',function(){
+  var f=this.files&&this.files[0]; this.value=''; if(f) sendMedia(f,'file','文件');
+});
+
+/* ==================== 更多 / 表情 ==================== */
+var EMOJIS='😀 😄 😊 🙂 😉 😍 🤩 😘 😳 🥲 😢 😭 😤 😱 🤔 🙃 😴 🤗 🥰 😅 😮‍💨 👍 👏 🙏 💪 🤝 ✌️ 🌹 🌸 🌿 🍃 🍂 🌙 ⭐ ☀️ ❄️ ☕ 🍵 🍶 🎐 🎋 📖 ✒️ 🖌 🗺 🕯 🎞 📮 💌 🕊'.split(' ');
+var STICKERS=[
+  {t:'安',s:'心安'},{t:'念',s:'思念'},{t:'等',s:'等你'},{t:'好',s:'好的'},
+  {t:'谢',s:'多谢'},{t:'茶',s:'请茶'},{t:'雨',s:'听雨'},{t:'月',s:'月色'}
+];
+function stickerSvg(ch){
+  var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">'
+   +'<rect x="6" y="6" width="108" height="108" rx="14" fill="#fdf9ef" stroke="#c9a961" stroke-width="2"/>'
+   +'<rect x="15" y="15" width="90" height="90" rx="8" fill="none" stroke="#d8bd8c" stroke-width="1" opacity=".7"/>'
+   +'<text x="60" y="82" font-size="52" text-anchor="middle" fill="#a83c2e" font-family="serif">'+ch+'</text></svg>';
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
+}
+$('#btnEmoji').addEventListener('click',function(){
+  var h='<div style="font-size:26px;line-height:1.9;display:flex;flex-wrap:wrap;gap:2px;max-height:34vh;overflow-y:auto">';
+  EMOJIS.forEach(function(e){ h+='<span class="em" style="cursor:pointer;padding:4px 5px;border-radius:8px">'+e+'</span>' });
+  h+='</div><div class="sheet-title" style="margin-top:14px">水 墨 小 笺</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">';
+  STICKERS.forEach(function(s,i){
+    h+='<div class="st" data-s="'+s.s+'" data-t="'+s.t+'" style="cursor:pointer;text-align:center">'
+     +'<img src="'+stickerSvg(s.t)+'" style="width:100%;border-radius:10px;display:block" alt="">'
+     +'<div style="font-size:11px;color:#8a7b62;margin-top:4px">'+s.s+'</div></div>';
+  });
+  h+='</div>';
+  openSheet('写 点 什 么',h);
+  var panel=$('#sheetPanel');
+  panel.querySelectorAll('.em').forEach(function(el){
+    el.addEventListener('click',function(){ $('#input').value += this.textContent; resizeInput(); closeSheet(); });
+  });
+  panel.querySelectorAll('.st').forEach(function(el){
+    el.addEventListener('click',function(){
+      var name=this.getAttribute('data-s');
+      var ch=this.getAttribute('data-t');
+      closeSheet();
+      api('/api/messages',{method:'POST',body:JSON.stringify({type:'image',content:JSON.stringify({url:stickerSvg(ch),name:name+'.svg',size:0})})})
+        .catch(function(e){ toast(e.message||'小笺发不出去'); });
+    });
+  });
+});
+$('#btnMore').addEventListener('click',function(){
+  var h='<div class="row" id="mImg" style="border-radius:10px"><span>发送图片</span><span class="chev">›</span></div>'
+    +'<div class="row" id="mFile" style="border-radius:10px"><span>发送文件</span><span class="chev">›</span></div>'
+    +'<div class="row" id="mExp" style="border-bottom:0;border-radius:10px"><span>导出聊天记录</span><span class="chev">›</span></div>';
+  openSheet('添 加',h);
+  $('#mImg').onclick=function(){ closeSheet(); $('#imgInput').click(); };
+  $('#mFile').onclick=function(){ closeSheet(); $('#fileInput').click(); };
+  $('#mExp').onclick=function(){ closeSheet(); exportMd(); };
+});
+
+/* ==================== 弹层 ==================== */
+function openSheet(title,html,onOpen,onAct){
+  $('#sheetTitle').textContent=title;
+  $('#sheetBody').innerHTML=html;
+  $('#sheet').classList.remove('hidden');
+  if(onOpen) onOpen();
+}
+function closeSheet(){ $('#sheet').classList.add('hidden'); $('#sheetBody').innerHTML=''; }
+$('#sheetMask').addEventListener('click',closeSheet);
+$('#sheetCancel').addEventListener('click',closeSheet);
+
+/* ==================== 我的 ==================== */
+$('#meAva').addEventListener('click',pickAvatar);
+function pickAvatar(){
+  var h='<div class="avatars">';
+  Object.keys(PRESETS).forEach(function(k){
+    if(k==='p7') return; // 印章头像是 App 图标，留给系统账号用
+    h+='<div class="pa'+(S.me.avatar===k?' on':'')+'" data-p="'+k+'"><img src="'+PRESETS[k]+'" alt=""></div>';
+  });
+  h+='</div><button class="sheet-act" id="pickPhoto" style="margin-top:16px">从相册选一张</button>';
+  openSheet('换 个 头 像',h,function(){
+    $('#sheetBody').querySelectorAll('.pa').forEach(function(el){
+      el.addEventListener('click',function(){
+        var p=this.getAttribute('data-p');
+        api('/api/profile',{method:'POST',body:JSON.stringify({avatar:p})})
+          .then(function(d){ S.me=d.me; paintMe(); closeSheet(); toast('头像换好了'); })
+          .catch(function(e){ toast(e.message); });
+      });
+    });
+    $('#pickPhoto').addEventListener('click',function(){
+      closeSheet();
+      var inp=document.createElement('input');
+      inp.type='file'; inp.accept='image/*';
+      inp.onchange=function(){
+        var f=inp.files&&inp.files[0]; if(!f) return;
+        showUp('头像',0);
+        shrink(f).then(function(ff){ return uploadXhr(ff,'image',function(p){showUp('头像',p)}) })
+          .then(function(up){
+            hideUp();
+            return api('/api/profile',{method:'POST',body:JSON.stringify({avatar:up.url})});
+          })
+          .then(function(d){ S.me=d.me; paintMe(); toast('头像换好了'); })
+          .catch(function(e){ hideUp(); toast(e.message); });
+      };
+      inp.click();
+    });
+  });
+}
+$('#btnEditName').addEventListener('click',function(){
+  openSheet('改 个 名 字','<input id="nameInput" value="'+esc(S.me.nick||'')+'" maxlength="16">'
+    +'<button class="sheet-act" id="nameGo">保存</button><div class="sheet-note">登录用的账号名不会变，只改别人看到的名字。</div>');
+  $('#nameGo').onclick=function(){
+    var v=$('#nameInput').value.trim();
+    if(!v) return toast('名字不能为空');
+    api('/api/profile',{method:'POST',body:JSON.stringify({nick:v})})
+      .then(function(d){ S.me=d.me; paintMe(); closeSheet(); toast('改好了'); })
+      .catch(function(e){ toast(e.message); });
+  };
+});
+$('#rowExport').addEventListener('click',exportMd);
+  if(BRIDGE){
+    $('#rowServer').style.display='';
+    $('#srvVal').textContent=location.host||'—';
+    $('#rowServer').addEventListener('click',function(){
+      try{ BRIDGE.changeServer(); }catch(e){ toast('请用 App 打开'); }
+    });
+  }
+function exportMd(){
+  toast('正在整理…',1200);
+  fetch('/api/export?token='+encodeURIComponent(S.token)).then(function(r){
+    if(!r.ok) throw new Error('导出失败');
+    return r.text();
+  }).then(function(txt){
+    var d=new Date(), pad=function(n){return String(n).padStart(2,'0')};
+    var name='尺素聊天记录-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'-'+pad(d.getHours())+pad(d.getMinutes())+'.md';
+    if(BRIDGE&&BRIDGE.saveText){
+      var p=BRIDGE.saveText(name,txt);
+      toast(p?('已保存：'+p):'已保存到下载目录',3200);
+    }else{
+      var b=new Blob([txt],{type:'text/markdown;charset=utf-8'});
+      var a=document.createElement('a');
+      a.href=URL.createObjectURL(b); a.download=name;
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },1500);
+      toast('已下载：'+name,3000);
+    }
+    setTimeout(checkRetention,600);
+  }).catch(function(e){ toast(e.message); });
+}
+$('#rowKey').addEventListener('click',function(){
+  if(!BRIDGE) return toast('密钥只在手机的 App 里');
+  var sec='';
+  try{ sec=BRIDGE.secretOf(S.me.username)||'' }catch(e){}
+  if(!sec) return toast('这台手机没有该账号的密钥');
+  var h='<div class="sheet-note" style="margin-top:0">这串字符就是你的动态密码种子。抄在纸上收好——'
+    +'换手机时用它恢复账号。<b>不要截图发人</b>。</div>'
+    +'<div class="secret-box">'+esc(sec)+'</div>'
+    +'<button class="sheet-act" id="copySec">复制</button>';
+  openSheet('动 态 密 钥',h);
+  $('#copySec').onclick=function(){
+    try{ BRIDGE.copy(sec); toast('已复制'); }catch(e){ toast('复制失败'); }
+  };
+});
+$('#rowRetention').addEventListener('click',function(){
+  openSheet('十 日 即 焚',
+    '<div class="sheet-note" style="margin-top:0;font-size:13px">'
+    +'<b>· 消息保留 '+S.retention+' 天</b><br>每条消息从发出的那一刻开始算，满 '+S.retention+' 天后自动从服务器删除，谁也取不回来。<br><br>'
+    +'<b>· 到期前一天提醒</b><br>第 '+(S.retention-1)+' 天起，聊天页顶上会出现一条红色提示，点一下就能把全部记录导出成 Markdown 文件存到手机里。<br><br>'
+    +'<b>· 内容加密</b><br>消息在服务器上是加密存的，传输走 HTTPS；动态密码每 3 分钟换一次，只在这台手机上生成。<br><br>'
+    +'<b>· 附件同寿</b><br>图片和文件跟着消息一起到期销毁。</div>');
+});
+$('#rowLogout').addEventListener('click',function(){
+  openSheet('退 出', '<div class="sheet-note" style="margin-top:0">退出后要重新输入动态码才能进来。这台手机上的密钥会留着。</div>'
+    +'<button class="sheet-act" id="logoutGo" style="background:linear-gradient(170deg,#8d2f23,#6f2318)">退出登录</button>');
+  $('#logoutGo').onclick=function(){ closeSheet(); doLogout(); };
+});
+function doLogout(){
+  api('/api/logout',{method:'POST'}).catch(function(){});
+  S.token=''; localStorage.removeItem('cs_token');
+  if(S.es){ try{S.es.close()}catch(e){} S.es=null; }
+  clearInterval(S.retTimer);
+  S.me=null; S.msgs=[];
+  $('#msgs').innerHTML='';
+  $('#code').value='';
+  showLogin();
+}
+
+/* ==================== 页签 ==================== */
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){
+    var tab=this.getAttribute('data-tab');
+    document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on',x===t) });
+    $('#page-chat').setAttribute('data-hidden',tab==='chat'?'0':'1');
+    $('#page-me').setAttribute('data-hidden',tab==='me'?'0':'1');
+    S.tab=tab;
+    if(tab==='me') paintMe();
+  });
+});
+
+/* ==================== 实时 ==================== */
+function connectSSE(){
+  if(S.es){ try{S.es.close()}catch(e){} }
+  if(!window.EventSource){ startPoll(); return; }
+  var es=new EventSource('/api/stream?token='+encodeURIComponent(S.token));
+  S.es=es;
+  es.onmessage=function(e){
+    var d; try{ d=JSON.parse(e.data) }catch(err){ return }
+    handleEvent(d);
+  };
+  es.onerror=function(){ /* EventSource 自己会重连 */ };
+}
+function handleEvent(d){
+  if(d.t==='msg'){ pushMsg(d.message); }
+  else if(d.t==='presence'){
+    S.members.forEach(function(m){ m.online=(d.online||[]).indexOf(m.id)>=0 });
+    paintOnline();
+  }
+  else if(d.t==='member'){
+    var f=S.members.filter(function(m){return m.id===d.member.id})[0];
+    if(f){ f.nick=d.member.nick; f.avatar=d.member.avatar; }
+    else S.members.push(Object.assign({online:false},d.member));
+    paintOnline();
+  }
+  else if(d.t==='purged'){ toast('有 '+d.removed+' 条旧消息到期销毁了'); loadMsgs(true); checkRetention(); }
+  else if(d.t==='hello'){
+    S.members.forEach(function(m){ m.online=(d.online||[]).indexOf(m.id)>=0 });
+    paintOnline();
+  }
+}
+var pollTimer=null;
+function startPoll(){
+  if(pollTimer) return;
+  pollTimer=setInterval(function(){
+    api('/api/messages?limit=40').then(function(d){
+      (d.messages||[]).forEach(pushMsg);
+    }).catch(function(){});
+  },3000);
+}
+
+/* ==================== 销毁提醒 ==================== */
+function checkRetention(){
+  if(!S.token) return;
+  api('/api/retention').then(function(d){
+    var bar=$('#expireBar');
+    if(!d.expiringAll){ bar.classList.add('hidden'); return; }
+    var txt;
+    if(d.firstExpireInMs>=0){
+      txt='<b>'+d.expiringAll+' 条</b>消息将在 <b>'+leftText(d.firstExpireInMs)+'</b>后销毁';
+    }else{
+      txt='<b>'+d.expiringAll+' 条</b>消息即将销毁';
+    }
+    if(d.exportedAt && Date.now()-d.exportedAt<6*3600*1000){
+      txt+=' · 已导出';
+    }
+    $('#expireText').innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" style="vertical-align:-2px;margin-right:5px"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5l3.2 1.9"/></svg>'+txt;
+    bar.classList.remove('hidden');
+  }).catch(function(){});
+}
+$('#expireBar').addEventListener('click',function(){ exportMd(); });
+$('#btnRefresh').addEventListener('click',function(){
+  loadMsgs(true); checkRetention(); toast('已刷新',1200);
+});
+
+/* ==================== 启动 ==================== */
+function boot(){
+  if(S.token){
+    api('/api/me').then(function(d){ enter(d); }).catch(function(){
+      S.token=''; localStorage.removeItem('cs_token'); showLogin();
+    });
+  }else{
+    showLogin();
+  }
+}
+window.addEventListener('resize',function(){ if(isNearBottom()) $('#msgs').scrollTop=$('#msgs').scrollHeight });
+boot();
+})();
+</script>
+</body>
+</html>

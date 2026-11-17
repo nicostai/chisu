@@ -1,0 +1,16 @@
+{
+  "name": "尺素 · 私语",
+  "short_name": "尺素",
+  "description": "动态密码登录 · 十日即焚的私语空间",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#efe7d8",
+  "theme_color": "#efe7d8",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
